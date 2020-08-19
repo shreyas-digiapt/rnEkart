@@ -1,0 +1,18 @@
+-------------------- Auto-Git Log --------------------
+		Wed Aug 19 2020 11:55:17 GMT+0530 (India Standard Time)
+------------------------------------------------------
+
+Modified files:
+* package-lock.json
+* package.json
+* src/screens/list_items.tsx
+
+
+Created files:
+* .autogit/logs/log-19-7-2020-11-25-12.txt
+
+
+Deleted files:
+
+
+Renamed files:

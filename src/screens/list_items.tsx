@@ -25,7 +25,7 @@ export default ({type, data}: ListItemProps) => {
   switch (type) {
     case 'viewPager':
       // return <MyViewPager data={data} />;
-      return <MyViewPager data={data} />;
+      return <MyCorousal data={data} />;
       break;
 
     case 'staticTitle':
@@ -47,7 +47,7 @@ export default ({type, data}: ListItemProps) => {
 };
 ////////////////////////////////////////////////viewpager////////////////////////////////////
 interface MyViewPager {
-  data: string[];
+  data: Array<string>;
 }
 
 interface MyStaticTitle {
@@ -214,8 +214,27 @@ const MyViewPager: FC<MyViewPager> = ({data}) => {
   );
 };
 
+interface MyCorousalItem {
+  item: string
+  index: number;
+}
+
+const MyCorousalItem:FC<MyCorousalItem> = ({item, index}) => {
+  return(
+    <View style={{backgroundColor:item, height:200, justifyContent:'center', alignItems:'center'}} >
+      <Text>{item}</Text>
+    </View>
+  )
+}
+
 const MyCorousal: FC<MyViewPager> = ({data}) => {
-  return <Carousel data={data} renderItem={() => <View></View>} />;
+  return <Carousel 
+  data={data}  
+  renderItem={MyCorousalItem} 
+  sliderWidth={width}
+  itemWidth={width} 
+  autoplay={true}
+  autoplayInterval={1000} />;
 };
 
 /////////////////////////////////////////ViewPager/////////////////////////////////////
