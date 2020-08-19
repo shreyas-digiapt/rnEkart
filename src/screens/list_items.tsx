@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 
 // Props
 interface ListItemProps {
@@ -215,26 +215,70 @@ const MyViewPager: FC<MyViewPager> = ({data}) => {
 };
 
 interface MyCorousalItem {
-  item: string
+  item: string;
   index: number;
 }
 
-const MyCorousalItem:FC<MyCorousalItem> = ({item, index}) => {
-  return(
-    <View style={{backgroundColor:item, height:200, justifyContent:'center', alignItems:'center'}} >
+const MyCorousalItem: FC<MyCorousalItem> = ({item, index}) => {
+  return (
+    <View
+      style={{
+        backgroundColor: item,
+        height: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
       <Text>{item}</Text>
     </View>
-  )
-}
+  );
+};
 
 const MyCorousal: FC<MyViewPager> = ({data}) => {
-  return <Carousel 
-  data={data}  
-  renderItem={MyCorousalItem} 
-  sliderWidth={width}
-  itemWidth={width} 
-  autoplay={true}
-  autoplayInterval={1000} />;
+  const [activeIndex, setActiveIndex] = useState(0);
+  var  myCorousalRef:Carousel<string>|null;
+
+  return (
+    <View>
+      <Carousel
+      ref={(c) => {myCorousalRef = c} }
+        data={data}
+        renderItem={MyCorousalItem}
+        sliderWidth={width}
+        itemWidth={width}
+        onSnapToItem={(index) => setActiveIndex(index) }
+        autoplay={true}
+        autoplayInterval={1000}
+        loop
+      />
+       <View
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          flexDirection: 'row',
+          alignSelf: 'center',
+          marginBottom: 10,
+        }}>
+        {data.map((key, i) => (
+          <View {...{key}} style={{alignSelf: 'center'}}>
+            <TouchableOpacity
+              style={{
+                width: activeIndex === i ? 15 : 10,
+                height: activeIndex === i ? 15 : 10,
+                borderRadius: activeIndex === i ? 15 : 5,
+                marginRight: data.length - 1 === i ? 0 : 5,
+                backgroundColor: '#ccc',
+              }}
+              onPress={() => {
+                console.log(activeIndex + '----lolol--------'+i);
+                // console.log(i * width + '------------');
+                  myCorousalRef?.snapToItem(i)
+                  setActiveIndex(i)
+              }}></TouchableOpacity>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
 };
 
 /////////////////////////////////////////ViewPager/////////////////////////////////////
