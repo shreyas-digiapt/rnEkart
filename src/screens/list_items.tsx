@@ -1,4 +1,4 @@
-import React, {FC, useState, createRef} from 'react';
+import React, {FC, useState, createRef, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -23,7 +23,8 @@ export default ({type, data}: ListItemProps) => {
 
   switch (type) {
     case 'viewPager':
-      return <MyViewPager data={data} />;
+      // return <MyViewPager data={data} />;
+      return <LoopCarousel />;
       break;
 
     case 'staticTitle':
@@ -80,7 +81,7 @@ const FourGridItem: FC<MyHorListItem> = ({name, coloor}) => {
         justifyContent: 'center',
         width: 150,
         height: 150,
-        margin: 20,
+        margin: 10,
       }}>
       <Text>{name}</Text>
     </View>
@@ -162,7 +163,9 @@ const MyViewPager: FC<MyViewPager> = ({data}) => {
           nativeEvent: {
             contentOffset: {x},
           },
-        }) => {        
+        }) => { 
+          console.log(x);
+                 
           setIndex(Math.round(x / width));
         }}
         showsHorizontalScrollIndicator={false}
@@ -210,6 +213,60 @@ const MyViewPager: FC<MyViewPager> = ({data}) => {
     </View>
   );
 };
+
+function LoopCarousel() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [data] = useState([1, 2, 3]);
+  const scrollViewRef = useRef<any>();
+
+  useEffect(() => {
+    goToPage(currentPage);
+  }, []);
+
+  useEffect(() => {
+    if (currentPage === data.length + 1) {
+      goToPage(1);
+      setCurrentPage(1);
+    }
+    if (currentPage === 0) {
+      goToPage(data.length);
+      setCurrentPage(data.length);
+    }
+  }, [currentPage]);
+
+  function goToPage(page: number) {
+    const to = page * width;
+    scrollViewRef.current.getNode().scrollTo({ x: to, y: 0, animated: false });
+  }
+
+  function onScrollEnd(e:any) {
+    const { contentOffset } = e.nativeEvent;
+    const viewSize = e.nativeEvent.layoutMeasurement;
+
+    // Divide the horizontal offset by the width of the view to see which page is visible
+    const pageNum = Math.floor(contentOffset.x / viewSize.width);
+    setCurrentPage(pageNum);
+  }
+
+  // [3, 1, 2, 3, 1]
+  const array = [data[data.length - 1], ...data, data[0]];
+
+  return (
+    <ScrollView
+      ref={scrollViewRef}
+      horizontal
+      pagingEnabled
+      onMomentumScrollEnd={onScrollEnd}
+    >
+      {array.map((item, i) => (
+        <View key={item}>
+          <Text>Page {item}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
 /////////////////////////////////////////ViewPager/////////////////////////////////////
 const styles = StyleSheet.create({
   container: {
